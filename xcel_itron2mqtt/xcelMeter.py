@@ -59,7 +59,7 @@ class CCM8Adapter(HTTPAdapter):
         # Set the specific cipher WITH @SECLEVEL=0
         # The @SECLEVEL=0 is critical - it sets the OpenSSL security level to 0,
         # which is required to allow CCM8 ciphers in OpenSSL 3.x
-        context.set_ciphers('ECDHE-ECDSA-AES128-CCM8:@SECLEVEL=0')
+        context.set_ciphers(CIPHERS)
         logger.debug(f"Set ciphers with security level 0 (current security_level: {context.security_level})")
 
         # Load client certificate if provided
