@@ -287,8 +287,8 @@ class xcelMeter():
 
         Returns: None
         """
-        mqtt_topic_prefix = os.getenv('MQTT_TOPIC_PREFIX', 'homeassistant/')
-        state_topic = f'{mqtt_topic_prefix}device/energy/{self.name.replace(" ", "_").lower()}'
+        mqtt_topic_prefix = os.getenv('MQTT_TOPIC_PREFIX', 'homeassistant')
+        state_topic = f'{mqtt_topic_prefix}/device/energy/{self.name.replace(" ", "_").lower()}'
         config_dict = {
             "name": self.name,
             "device_class": "energy",
