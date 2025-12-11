@@ -86,6 +86,15 @@ docker run --rm -it \
 ```
 
 Alternatively, the `docker-compose.yaml` will allow you to bring a up an ephemeral MQTT broker along with the xcel_itron2mqtt container. Simply copy `.env.sample` to `.env`, update variables there as needed, and run `docker compose up`. You can then use `docker exec -it xcel_itron2mqtt /bin/bash` to attach to the running container.
+
+### Using Nix
+If you have Nix with flakes enabled, you can use the provided flake to set up a development environment with Python 3 and all required dependencies:
+```
+nix develop
+```
+
+This will drop you into a shell with Python and all packages from `requirements.txt` available.
+
 ## Contributing
 
 Please feel free to create an issue with a feature request, bug, or any other comments you have on the software found here.
