@@ -111,6 +111,57 @@ python3 -Wignore main.py
 
 Make it executable with `chmod +x hack/run.sh`, then run with `./hack/run.sh`.
 
+## Troubleshooting
+
+### Verifying MQTT User Permissions
+
+If messages aren't appearing in your MQTT broker, verify that your MQTT user has the correct read/write permissions.
+
+**1. Test MQTT publish/subscribe functionality:**
+
+In one terminal, start a subscriber:
+```bash
+mosquitto_sub -h localhost -t "test/topic" -u your_mqtt_user -P your_password
+```
+
+In another terminal, publish a test message:
+```bash
+mosquitto_pub -h localhost -t "test/topic" -m "test message" -u your_mqtt_user -P your_password
+```
+
+If the subscriber receives the message, your MQTT user has proper permissions.
+
+**2. Check ACL configuration:**
+
+If messages aren't being received, check your Mosquitto ACL file (typically `/etc/mosquitto/acl.conf` or similar). Your user needs read/write access to the topics:
+
+```
+user your_mqtt_user
+topic readwrite #
+```
+
+The `#` wildcard grants access to all topics. For more restrictive access, specify the topic prefix:
+```
+user your_mqtt_user
+topic readwrite homeassistant/#
+```
+
+**3. Reload Mosquitto after configuration changes:**
+
+After modifying ACL or password files, restart Mosquitto to apply changes:
+```bash
+sudo systemctl restart mosquitto
+```
+
+Or reload the configuration without full restart:
+```bash
+sudo systemctl reload mosquitto
+```
+
+**4. Enable debug logging:**
+
+Set `LOGLEVEL=DEBUG` in your environment to see detailed MQTT publish attempts and responses.
+
 ## Contributing
 
 Please feel free to create an issue with a feature request, bug, or any other comments you have on the software found here.

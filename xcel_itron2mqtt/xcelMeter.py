@@ -287,7 +287,8 @@ class xcelMeter():
 
         Returns: None
         """
-        state_topic = f'homeassistant/device/energy/{self.name.replace(" ", "_").lower()}'
+        mqtt_topic_prefix = os.getenv('MQTT_TOPIC_PREFIX', 'homeassistant/')
+        state_topic = f'{mqtt_topic_prefix}device/energy/{self.name.replace(" ", "_").lower()}'
         config_dict = {
             "name": self.name,
             "device_class": "energy",
@@ -297,9 +298,16 @@ class xcelMeter():
         config_dict.update(self.device_info)
         config_json = json.dumps(config_dict)
         logging.debug(f"Sending MQTT Discovery Payload")
-        logging.debug(f"TOPIC: {state_topic}")
-        logging.debug(f"Config: {config_json}")
-        self.mqtt_client.publish(state_topic, str(config_json))
+
+        result = self.mqtt_client.publish(state_topic, str(config_json))
+        if result.rc == mqtt.MQTT_ERR_SUCCESS:
+            logging.debug(f"MQTT discovery payload published successfully (mid: {result.mid})")
+            logging.debug(f"TOPIC: {state_topic}")
+            logging.debug(f"Config: {config_json}")
+        elif result.rc == mqtt.MQTT_ERR_NO_CONN:
+            logging.error(f"MQTT publish failed: Not connected to broker")
+        else:
+            logging.error(f"MQTT publish failed with return code: {result.rc}")
 
     def run(self) -> None:
         """

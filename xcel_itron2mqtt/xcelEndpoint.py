@@ -161,17 +161,21 @@ class xcelEndpoint():
     def mqtt_publish(self, topic: str, message: str, retain=False) -> int:
         """
         Publish the given message to the topic associated with the class
-       
-        Returns: integer
+
+        Returns: integer (return code)
         """
-        result = [0]
-        #print(f"Sending to MQTT TOPIC:\t{topic}")
-        #print(f"Payload:\t\t{message}")
         result = self.client.publish(topic, str(message), retain=retain)
-        #print('Error in sending MQTT payload')
-        #print(f"MQTT Send Result: \t\t{result}")
-        # Return status of the published message
-        return result[0]
+
+        # Check the return code and log appropriately
+        if result.rc == mqtt.MQTT_ERR_SUCCESS:
+            logger.debug(f"Published to {topic} (mid: {result.mid})")
+        elif result.rc == mqtt.MQTT_ERR_NO_CONN:
+            logger.error(f"MQTT publish to {topic} failed: Not connected to broker")
+        else:
+            logger.error(f"MQTT publish to {topic} failed with return code: {result.rc}")
+
+        # Return status of the published message (backwards compatibility)
+        return result.rc
 
     def run(self) -> None:
         """
