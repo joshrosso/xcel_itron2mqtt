@@ -95,6 +95,22 @@ nix develop
 
 This will drop you into a shell with Python and all packages from `requirements.txt` available.
 
+For local development, create a `hack/run.sh` script with your settings (this directory is gitignored):
+
+```sh
+#!/bin/sh
+cd "$(dirname "$0")/../xcel_itron2mqtt" || exit 1
+
+export MQTT_SERVER=localhost
+export MQTT_PORT=1883
+export MQTT_USER=your_user
+export MQTT_PASSWORD=your_password
+export LOGLEVEL=DEBUG
+python3 -Wignore main.py
+```
+
+Make it executable with `chmod +x hack/run.sh`, then run with `./hack/run.sh`.
+
 ## Contributing
 
 Please feel free to create an issue with a feature request, bug, or any other comments you have on the software found here.
